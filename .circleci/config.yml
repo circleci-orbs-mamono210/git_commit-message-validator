@@ -1,0 +1,28 @@
+version: 2.1
+
+orbs:
+  validator: orbss/git_commit-message-validator@0.1.0
+
+jobs:
+  fail-test:
+    executor:
+      name: validator/circleci-node-latest
+
+    steps:
+      - checkout
+      - validator/validate:
+          pattern: "refs ##[0-9]+$"
+      - run:
+          command: |
+            echo "fail test success"
+            exit 0
+          when: on_fail
+
+workflows:
+  version: 2
+  validate:
+    jobs:
+      - validator/validate-message:
+          pattern: "refs #[0-9]+$"
+
+      - fail-test
